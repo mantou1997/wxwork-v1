@@ -77,7 +77,7 @@ else
   uwsgi)
     exec_uwsgi
     ;;
-  celery)
+  worker)
     exec_celery_worker
     ;;
   beat)

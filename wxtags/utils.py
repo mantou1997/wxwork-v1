@@ -3,6 +3,8 @@ import json
 import requests
 from django.conf import settings
 
+from utils.cache import cache_function
+
 
 def get_user_ad_info(users) -> dict:
     """
@@ -15,7 +17,7 @@ def get_user_ad_info(users) -> dict:
                         params={"accounts": users}).json()
 
 
-# @cache_function(key='wx_access_token', timeout=2 * 60 * 60)
+@cache_function(key='wx_access_token', timeout=2 * 60 * 60)
 def get_access_token() -> str:
     """获取 access token """
     url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"

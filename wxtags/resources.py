@@ -32,10 +32,6 @@ class TagWidget(widgets.ManyToManyWidget):
 
     def clean(self, value, row=None, *args, **kwargs):
         values = TagField().clean(value)
-        # return [
-        #     Tag.objects.get_or_create(name=tag)[0]
-        #     for tag in values
-        # ]
         tags = list()
         for value in values:
             for tag in value.split(";"):
@@ -62,7 +58,7 @@ class TagFieldImport(fields.Field):
 
 class WxTagsResource(resources.ModelResource):
     """导入导出资源配置"""
-    tags = TagFieldImport(attribute="tags", column_name="tags", widget=TagWidget(Tag, separator=";"))
+    tags = TagFieldImport(attribute="tags", column_name="tags", widget=TagWidget(Tag, separator=","))
 
     class Meta:
         model = WxTags

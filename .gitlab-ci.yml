@@ -1,0 +1,30 @@
+variables:
+  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+  DEPLOY_BRANCH: "$CI_COMMIT_BRANCH"
+  DEPLOY_PATH: "$CI_COMMIT_BRANCH"
+  DEPLOY_IMAGE: "$INFRA_REGISTRY/$CI_PROJECT_NAME:$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA"
+
+services:
+  - docker:19.03-dind
+
+.only-branch:
+  only:
+    - master
+    - dev
+
+build:
+  stage: build
+  extends: .only-branch
+  image: docker:19.03
+  script:
+    - echo $REGISTRY_URL
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD $REGISTRY_URL
+    - docker build -t $DEPLOY_IMAGE .
+    - docker push $DEPLOY_IMAGE
+
+deploy:
+  extends: .only-branch
+  stage: deploy
+  trigger: it.Infrastructure/wxwork-gitops
