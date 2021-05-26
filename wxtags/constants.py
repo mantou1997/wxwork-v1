@@ -1,5 +1,7 @@
 AUTHENTICATION = 0
+TEST = 1
 
 KEY_CHOICES = [
     (AUTHENTICATION, '认证'),
+    (TEST, '测试'),
 ]

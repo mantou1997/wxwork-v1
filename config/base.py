@@ -63,4 +63,7 @@ CELERY_BROKER_URL = env.get('CELERY_BROKER_URL')
 # import_export settings
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# itapi portal api key
+API_KEY = env.get('API_KEY')
+CORPID = env.get('CORPID')
+CORPSECRET = env.get('CORPSECRET')
