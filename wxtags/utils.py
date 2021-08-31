@@ -1,9 +1,13 @@
 import json
+from typing import List
 
 import requests
 from django.conf import settings
 
 from utils.cache import cache_function
+from utils.env import Env
+
+env = Env()
 
 
 def get_user_ad_info(users) -> dict:
@@ -45,3 +49,29 @@ def update_wx_user(userid: str, extattr: dict):
                       "userid": userid,
                       "extattr": extattr
                   }))
+
+
+def get_jdy_user_info(users: List):
+    payload = {
+        "fields": ["account", "wxid"],
+        "limit": 10000,
+        "filter": {
+            "rel": "and",
+            "cond": [
+                {
+                    "field": "account",
+                    "type": "string",
+                    "method": "in",
+                    "value": users
+                }
+            ]
+        }
+    }
+
+    header = {"Authorization": "Bearer {token}".format(token=env.get('JIAN_DAO_YUN_TOKEN')),
+              "Content-Type": "application/json"}
+    response = requests.post(headers=header, data=json.dumps(payload),
+                             url='https://api.jiandaoyun.com/api/v2/app/'
+                                 '{app}/entry/{table}/data'.format(app=env.get('JIAN_DAO_YUN_APP_ID'),
+                                                                   table=env.get('JIAN_DAO_YUN_TABLE_ID')))
+    return response.json()
