@@ -41,14 +41,27 @@ def update_wx_user(userid: str, extattr: dict):
     """
     url = "https://qyapi.weixin.qq.com/cgi-bin/user/update"
     access_token = get_access_token()
-    requests.post(url=url,
-                  params={
-                      "access_token": access_token
-                  },
-                  data=json.dumps({
-                      "userid": userid,
-                      "extattr": extattr
-                  }))
+    return requests.post(url=url,
+                         params={
+                             "access_token": access_token
+                         },
+                         data=json.dumps({
+                             "userid": userid,
+                             "extattr": extattr
+                         }))
+
+
+def get_wx_user(user_id: str):
+    """
+    获取用户信息
+    @user_id: 企业微信用户 ID
+    """
+    url = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
+    access_token = get_access_token()
+    return requests.get(url=url, params={
+        "access_token": access_token,
+        "userid": user_id
+    })
 
 
 def get_jdy_user_info(users: List):

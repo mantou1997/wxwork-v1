@@ -3,10 +3,11 @@ from django.db import models
 from model_utils.models import UUIDModel, TimeStampedModel
 from taggit.managers import TaggableManager
 
+from utils.common.models import ExtraModel
 from wxtags.constants import KEY_CHOICES, AUTHENTICATION
 
 
-class WxTags(TimeStampedModel):
+class WxTags(ExtraModel, TimeStampedModel):
     """企业微信用户标签模型"""
     da = models.CharField(verbose_name='域账号', max_length=20)
     wxid = models.CharField(verbose_name='企微 ID', max_length=20, blank=True, null=True)

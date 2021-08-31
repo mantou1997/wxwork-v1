@@ -6,7 +6,7 @@ from import_export.admin import ImportExportModelAdmin
 
 from wxtags.models import WxTags
 from wxtags.resources import WxTagsResource, get_value_by_key
-from wxtags.utils import update_wx_user, get_jdy_user_info
+from wxtags.utils import update_wx_user, get_jdy_user_info, get_wx_user
 
 logger = logging.getLogger('root')
 
@@ -23,9 +23,10 @@ class WxTagsAdmin(ImportExportModelAdmin):
         ('基本信息', {'classes': ['grp-collapse grp-open'],
                   'fields': ['da', 'wxid', 'key']}),
         ('标签管理', {'classes': ['grp-collapse grp-open'], 'fields': ['tags']}),
+        ('操作记录', {'classes': ['grp-collapse grp-open'], 'fields': ['extra']}),
     ]
     resource_class = WxTagsResource
-    actions = ['get_wxid_by_da', 'add_tag_by_user']
+    actions = ['get_wxid_by_da', 'add_tag_by_user', 'check_user_tags']
 
     def save_model(self, request, obj, form, change):
         """保存模型时，自动填充 operator 字段"""
@@ -76,10 +77,29 @@ class WxTagsAdmin(ImportExportModelAdmin):
                             }
                         }
                         attrs.append(attr)
-                update_wx_user(userid=wxid, extattr={"attrs": attrs})
+                result = update_wx_user(userid=wxid, extattr={"attrs": attrs})
+                logger.info(result.text)
             self.message_user(request, '给用户打标签完成')
             logger.info('给用户打标签完成')
         except Exception as e:
             self.message_user(request, e)
 
     add_tag_by_user.short_description = '🚀 2. 更新用户标签'
+
+    def check_user_tags(self, request, queryset):
+        """校验用户标签"""
+        logger.info('开始校验选中用户')
+        for q in queryset.filter(wxid__isnull=False):
+            try:
+                user = get_wx_user(q.wxid).json()
+                current_tag = "|".join([attr['value'] for attr in user['extattr']['attrs'] if attr['name']==q.get_key_display()])
+                expect_tag = "|".join([tag.name for tag in q.tags.all()])
+                logger.info(f'【{q}】 expect tag <{expect_tag}>, current tag <{current_tag}>')
+                q.extra = f'【{q}】 expect tag <{expect_tag}>, current tag <{current_tag}>'
+                q.save()
+                if current_tag != expect_tag:
+                    logger.error(f'【{q}】 tag check error, pls try again')
+            except Exception as e:
+                logger.info(f'{q} {e}')
+
+    check_user_tags.short_description = '🐔 3. 校验选中用户'
