@@ -17,7 +17,7 @@ delete_selected.short_description = "❌ 删除所选对象"
 class WxTagsAdmin(ImportExportModelAdmin):
     """企微字段管理"""
     list_display = ['da', 'wxid', 'key', 'tag_list', 'operator', 'created', 'modified']
-    list_filter = ['key', 'operator__username']
+    list_filter = ['key', 'operator__username', 'wxid']
     search_fields = ['da']
     fieldsets = [
         ('基本信息', {'classes': ['grp-collapse grp-open'],
