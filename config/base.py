@@ -1,5 +1,5 @@
 """添加各环境公用配置"""
-from utils.env import os, Env
+from utils.env import os, env
 from config.settings import *
 from config.common.grappelli.config import *
 from config.common.filebrowser import *
@@ -7,7 +7,6 @@ from config.common.drf import *
 from config.common.celery import *
 from config.common.logging import *
 
-env = Env()
 
 # 语言/时区
 LANGUAGE_CODE = 'zh-hans'

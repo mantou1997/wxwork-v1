@@ -4,7 +4,7 @@ from typing import List
 import requests
 from django.conf import settings
 
-from utils.cache import cache_function
+from utils.decorators import cache_function
 from utils.env import Env
 
 env = Env()

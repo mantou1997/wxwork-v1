@@ -30,6 +30,7 @@ urlpatterns = [
 # 自研 APP 路由
 urlpatterns += [
     path('<version>/account/', include('account.urls')),
+    path('<version>/api/', include('api.urls')),
 ]
 
 

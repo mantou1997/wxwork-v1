@@ -3,7 +3,6 @@
 Env类优先读取 .envrc 中的配置，再读取环境变量的配置
 """
 import argparse
-import json
 import os
 import threading
 import wrapt
@@ -53,8 +52,8 @@ class Env(metaclass=SingletonType):
         try:
             self.envs_from_file = self.read_from_dot_envrc()
             self.data.update(self.envs_from_file)
-        except Exception as e:
-            print(e)
+        except Exception as err:
+            print(err)
         self.data.update(os.environ)
 
     def read_from_dot_envrc(self) -> dict:
@@ -119,6 +118,8 @@ class Env(metaclass=SingletonType):
         return list(set(self.envs) ^ set(self.data.keys()))
 
 
+env = Env()
+
 if __name__ == "__main__":
     # 命令行解析
     parser = argparse.ArgumentParser(description="desc")
@@ -126,10 +127,8 @@ if __name__ == "__main__":
     parser.add_argument("--params", type=str, nargs="+", help='命令参数')
     cmd_args = parser.parse_args()
 
-    # 执行命令
-    e = Env()
     try:
-        attr = getattr(e, cmd_args.cmd)
+        attr = getattr(env, cmd_args.cmd)
         params = cmd_args.params or []
         attr(*params)
     except Exception as e:

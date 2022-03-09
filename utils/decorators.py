@@ -8,7 +8,6 @@ def cache_function(key=None, timeout=None, alias="default"):
     :param timeout: 超时时间
     :param alias: 缓存配置
     """
-
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         from django.core.cache import caches
