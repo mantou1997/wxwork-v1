@@ -1,3 +1,6 @@
+# 简道云流程正常结束为 1
+FLOW_STATE_NOT_FINISHED = [0, 2]
+
 # 应用与标签 ID 的映射关系
 APP_TAG_MAP = {
     "应用-A01 应用中心": 95,

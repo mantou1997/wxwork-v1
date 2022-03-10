@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../cod/.idea/Cod.iml" filepath="$PROJECT_DIR$/../cod/.idea/Cod.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/wxwork.iml" filepath="$PROJECT_DIR$/.idea/wxwork.iml" />
     </modules>
   </component>

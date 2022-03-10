@@ -7,7 +7,7 @@ from rest_framework.viewsets import GenericViewSet
 from utils.wxwork import wechat_client
 from utils.alerter import alerter, ALERTID
 from api.serializers import TagSerializer
-from api.constants import APP_TAG_MAP
+from api.constants import APP_TAG_MAP, FLOW_STATE_NOT_FINISHED
 
 logger = logging.getLogger('root')
 
@@ -26,6 +26,13 @@ class WxworkTag(GenericViewSet):
             return Response({'status': 'error', 'message': f'validate error: {e}'}, status=status.HTTP_400_BAD_REQUEST)
 
         data = serializer.data
+
+        # 判断流程是否走完
+        flow_state = data.get('flow_state')
+        if flow_state in FLOW_STATE_NOT_FINISHED:
+            logger.warning(f'简道云流程还未结束，当前流程状态为 {flow_state}')
+            return Response({'status': 'error', 'message': f'简道云流程还未结束，当前流程状态为 {flow_state}'})
+
         for app in data.get('apps'):
             tag_id = APP_TAG_MAP.get(app)
             user_id = data['user']['username']
