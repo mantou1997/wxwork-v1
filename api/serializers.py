@@ -11,7 +11,6 @@ class StringListField(serializers.ListSerializer):
 
 class TagSerializer(serializers.Serializer):
     user = serializers.JSONField(label='用户', required=True)
-    director = serializers.JSONField(label='主管', required=True)
     apps = StringListField(label='应用', required=True)
     flow_state = serializers.IntegerField(label='流程状态', required=True)
 
