@@ -3,3 +3,13 @@
 STATUS_DRAFT = '草稿'
 STATUS_PUBLISHED = '发布'
 STATUS_OFFLINE = '下架'
+
+
+# 启用禁用
+STATUS_ENABLE = 0
+STATUS_DISABLE = 1
+
+ENABLE_CHOICES = (
+    (STATUS_ENABLE, '启用'),
+    (STATUS_DISABLE, '禁用')
+)

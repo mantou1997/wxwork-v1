@@ -45,6 +45,14 @@ class DateTimeFramedModel(MUTimeFramedModel):
         return False
 
 
+class TimeStampedModel(models.Model):
+    created = models.DateTimeField(verbose_name='创建', auto_now_add=True)
+    modified = models.DateTimeField(verbose_name='修改', auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
 class TimeFramedModel(models.Model):
     """提供 TimeField 时间窗口"""
     start = models.TimeField(verbose_name='开始', blank=True, null=True)

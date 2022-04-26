@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.constants import APP_TAG_MAP
+from utils.drf.serializers import JDYBaseSerializer, BaseSerializer
 
 
 class StringListField(serializers.ListSerializer):
@@ -9,27 +9,12 @@ class StringListField(serializers.ListSerializer):
         pass
 
 
-class TagSerializer(serializers.Serializer):
+class TagSerializer(JDYBaseSerializer):
     user = serializers.JSONField(label='用户', required=True)
     apps = StringListField(label='应用', required=True)
     flow_state = serializers.IntegerField(label='流程状态', required=True)
 
-    def to_internal_value(self, data):
-        flow_state = data.get('flowState', 0)
-        data.update({'flow_state': flow_state})
-        return data
 
-    def validate_apps(self, value):
-        keys = APP_TAG_MAP.keys()
-        if set(value).issubset(set(keys)):
-            return value
-
-        # 求差集
-        diff = ','.join(list(set(value).difference(set(keys))))
-        raise serializers.ValidationError(f'【{diff}】暂不支持，请联系管理员')
-
-    def update(self, instance, validated_data):
-        pass
-
-    def create(self, validated_data):
-        pass
+class UpdateAttrSerializer(BaseSerializer):
+    domain = serializers.CharField(label='域账号', max_length=20)
+    excel = serializers.FileField(label='文件', max_length=200)
