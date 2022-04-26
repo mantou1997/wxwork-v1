@@ -7,7 +7,6 @@ from config.common.drf import *
 from config.common.celery import *
 from config.common.logging import *
 
-
 # 语言/时区
 LANGUAGE_CODE = 'zh-hans'
 TIME_ZONE = 'Asia/Shanghai'
@@ -36,6 +35,7 @@ INSTALLED_APPS += [
     'taggit',
     'import_export',
     'taggit_labels',
+    'api.apps.ApiConfig',
 ]
 
 INSTALLED_APPS += [

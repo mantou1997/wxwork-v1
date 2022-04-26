@@ -1,11 +1,14 @@
+from logging import Logger, getLogger
+
 from wechatpy.enterprise import WeChatClient
-from wechatpy.session.memorystorage import MemoryStorage
 from utils.env import env
 
-API_KEY = env.get('API_KEY')
-CORPID = env.get('CORPID')
-CORPSECRET = env.get('CORPSECRET')
+logger: Logger = getLogger('root')
 
-session_interface = MemoryStorage()
+WX_CORP_ID = env.get('WX_CORP_ID')
+WX_CORP_SECRET = env.get('WX_CORP_SECRET')
 
-wechat_client = WeChatClient(corp_id=CORPID, secret=CORPSECRET, session=session_interface)
+WX_AGENT_ID = env.get('WX_AGENT_ID')
+MAINTAINERS = env.get('MAINTAINERS').split(';')
+
+wechat_client = WeChatClient(corp_id=WX_CORP_ID, secret=WX_CORP_SECRET)

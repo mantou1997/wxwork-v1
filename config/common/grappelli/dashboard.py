@@ -39,6 +39,7 @@ class CustomIndexDashboard(Dashboard):
             css_classes=('collapse open',),
             # 此处添加模型列表
             models=[
+                'api.models.UserPermissions',
                 'wxtags.models.WxTags',
                 'taggit.models.Tag',
             ]

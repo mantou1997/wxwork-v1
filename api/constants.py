@@ -33,3 +33,14 @@ APP_TAG_MAP = {
     "组织架构-电力电子 BG 全员": 106,
     "组织架构-投资并购 BG 全员": 107,
 }
+
+USER_PERMISSIONS = {
+    '认证': [
+        'peizhenfei',
+        'liuaote'
+    ],
+    '党员': [
+        'peizhenfei',
+        'liuaote'
+    ]
+}
