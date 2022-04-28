@@ -4,6 +4,8 @@ from rest_framework.exceptions import ValidationError
 from wechatpy.work import WeChatClient
 
 from utils.wxiac import iac
+from utils.wxmethod import wx_method
+from rest_framework import status
 from utils.logger import logger
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -56,7 +58,7 @@ class MyExcelView(GenericViewSet):
 
             print(domain_p, field, content, option)
             # 3.根据域账户获取wx-id
-            wx_id = iac.get_user_info(domain=domain)
+            wx_id = iac.get_user_info(domain=domain_p)
             if not wx_id:
                 continue
 
@@ -67,14 +69,24 @@ class MyExcelView(GenericViewSet):
             corp_id = 'wx1deaa225db7d8ad5'
             secret = 'k17z57QaTptGQseICE2xZ7jde9H2VklMdHr1Ju8KgbE'
             # 4.调用企业微信API,获取extattr
-            extattrAdd = WeChatClient(corp_id, secret).user.get(wx_id)['extattr']
-            logger.info(f'get extattr {domain_p} info: {extattrAdd}')
+            client = WeChatClient(corp_id, secret)
+            extattr_add = client.user.get(wx_id)['extattr']
+            logger.info(f'get extattr {domain_p} info: {extattr_add}')
+
             # 调用具体字段-方法
+            extattr_add_upate = wx_method.replace_zyz(extattr_add, domain_p, content, option)
+            logger.info(f'replace 志愿者 {domain_p} info: success')
 
-
+            # 调用企业微信api，更新字段
+            # 调用更改api
+            try:
+                client.user.update(user_id=wx_id, extattr=extattr_add_upate)
+                return Response({'message':f'{domain_p}用户更新成功'},status=status.HTTP_200_OK)
+            except:
+                return Response({'message':f'{domain_p}用户更新失败'},status=status.HTTP_404_NOT_FOUND)
 
         wb.close()
-        return Response({'11': '111'})
+
 
 
 '''
