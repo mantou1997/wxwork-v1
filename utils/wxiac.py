@@ -23,6 +23,9 @@ class WxIAC(object):
         logger.info(f'iac get access token: {json_response}')
         return json_response['data']['accessToken']
 
+    """
+    @param domain: 域账户
+    """
     def get_user_info(self, domain: str) -> dict:
         url = "http://wx-api.gz.cvte.cn/user/search"
         headers = {
@@ -34,7 +37,16 @@ class WxIAC(object):
         response = requests.get(url=url, headers=headers, params=params)
         json_response = response.json()
         logger.info(f'get user {domain} info: {json_response}')
-        return json_response['data']['data']['wxId']
+        # 判断wxId是否为空
+        for key in json_response['data']:
+            if json_response['data'][key] != None:
+                wxId = json_response['data']['data']['wxId']
+                break
+            else:
+                logger.info(f'get user {domain} info: wxId is None')
+                wxId = None
+                break
+        return wxId
 
 
 iac = WxIAC()
