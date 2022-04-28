@@ -36,11 +36,20 @@ APP_TAG_MAP = {
 
 USER_PERMISSIONS = {
     '认证': [
-        'peizhenfei',
-        'liuaote'
+        'o_liuaote'
     ],
     '党员': [
-        'peizhenfei',
-        'liuaote'
+
     ]
+}
+
+# 获取token
+IAC_SECRET = {
+    'appid': 'db723212-3835-46a8-96d0-e760114dc0fb',
+    'secret': '7c625c45-a2b7-40db-a4ed-cc63d34e4d8a'
+}
+# 调用企业微信api
+WX_SECRET = {
+    'corp_id': 'wx1deaa225db7d8ad5',
+    'secret': 'k17z57QaTptGQseICE2xZ7jde9H2VklMdHr1Ju8KgbE'
 }
