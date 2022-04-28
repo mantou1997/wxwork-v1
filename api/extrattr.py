@@ -50,6 +50,7 @@ class MyExcelView(GenericViewSet):
         """
         wb = openpyxl.load_workbook(excel)
         ws = wb.get_sheet_by_name(wb.get_sheet_names()[0])
+        print(ws.max_row)
         for row in range(2, ws.max_row + 1):
             domain_p = ws.cell(row=row, column=2).value
             field = ws.cell(row=row, column=3).value
@@ -57,6 +58,9 @@ class MyExcelView(GenericViewSet):
             option = ws.cell(row=row, column=5).value
 
             print(domain_p, field, content, option)
+            if content == "清空":
+                content = ""
+
             # 3.根据域账户获取wx-id
             wx_id = iac.get_user_info(domain=domain_p)
             if not wx_id:
@@ -74,17 +78,22 @@ class MyExcelView(GenericViewSet):
             logger.info(f'get extattr {domain_p} info: {extattr_add}')
 
             # 调用具体字段-方法
-            extattr_add_upate = wx_method.replace_zyz(extattr_add, domain_p, content, option)
-            logger.info(f'replace 志愿者 {domain_p} info: success')
+            if field == '志愿者':
+                extattr_add_upate = wx_method.replace_zyz(extattr_add, domain_p, content, option)
+            elif field == '认证':
+                extattr_add_upate = wx_method.replace_auth(extattr_add, domain_p, content, option)
+            elif field == '归属':
+                extattr_add_upate = wx_method.replace_gs(extattr_add, domain_p, content, option)
+            else:
+                logger.info(f'{domain_p} :没有该字段')
 
-            # 调用企业微信api，更新字段
-            # 调用更改api
             try:
                 client.user.update(user_id=wx_id, extattr=extattr_add_upate)
-                return Response({'message':f'{domain_p}用户更新成功'},status=status.HTTP_200_OK)
+                logger.info(f'replace {field}\000 {domain_p} info: success')
             except:
-                return Response({'message':f'{domain_p}用户更新失败'},status=status.HTTP_404_NOT_FOUND)
+                logger.info(f'replace {field}\000 {domain_p} info: error')
 
+        return Response({'message': f'用户字段更新完成'}, status=status.HTTP_200_OK)
         wb.close()
 
 
