@@ -1,6 +1,6 @@
 from logging import Logger, getLogger
 
-from wechatpy.enterprise import WeChatClient
+from wechatpy.work import WeChatClient
 from utils.env import env
 
 logger: Logger = getLogger('root')

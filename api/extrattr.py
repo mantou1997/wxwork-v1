@@ -67,11 +67,8 @@ class MyExcelView(GenericViewSet):
             corp_id = 'wx1deaa225db7d8ad5'
             secret = 'k17z57QaTptGQseICE2xZ7jde9H2VklMdHr1Ju8KgbE'
             # 4.调用企业微信API,获取extattr
-            client = WeChatClient(corp_id, secret)
-            get = client.user(wx_id)
-            print(get)
-            #extattrAdd = WeChatClient(corp_id, secret).user.get(wx_id)['extattr']
-            #logger.info(f'get extattr {domain_p} info: {extattrAdd}')
+            extattrAdd = WeChatClient(corp_id, secret).user.get(wx_id)['extattr']
+            logger.info(f'get extattr {domain_p} info: {extattrAdd}')
             # 调用具体字段-方法
 
 
