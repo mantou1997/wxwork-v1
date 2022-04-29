@@ -43,7 +43,7 @@ class MyExcelView(GenericViewSet):
         @param domain_p: 表单里的域账户信息
         @param field: 要修改的字段
         @param content: 修改的内容
-        @param option: 执行的选项
+        @param option: 执行的选项 (替换/更新)
         """
         wb = openpyxl.load_workbook(excel)
         ws = wb.get_sheet_by_name(wb.get_sheet_names()[0])
