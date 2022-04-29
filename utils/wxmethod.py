@@ -1,6 +1,10 @@
+from rest_framework import status
+
 from utils.logger import logger
-from wechatpy.work import WeChatClient
-from api.constants import USER_PERMISSIONS
+from rest_framework.response import Response
+
+# from wechatpy.work import WeChatClient
+# from api.constants import USER_PERMISSIONS
 
 
 class WxMethod(object):
@@ -83,7 +87,7 @@ class WxMethod(object):
 
         return extattr_add
 
-    def update_api(self, extattr_add: dict, domain_p: str, field: str, content: str) -> dict:
+    def choice_field(self, extattr_add: dict, domain_p: str, field: str, content: str) -> dict:
         # 调用具体字段-方法
         if field == '志愿者':
             extattr_add_update = self.replace_zyz(extattr_add, domain_p, content)
@@ -98,32 +102,4 @@ class WxMethod(object):
 
 
 wx_method = WxMethod()
-'''
-    @staticmethod
-    def update_api(corp_id: str, secret: str, domain_p: str, domain: str, field: str, wx_id: str, content: str,
-                   option: str) -> bool:
-        extattr_add_update = []
-        client = WeChatClient(corp_id, secret)
-        extattr_add = client.user.get(wx_id)['extattr']
-        logger.info(f'get extattr {domain_p} info: {extattr_add}')
 
-        # 调用具体字段-方法
-        if field == '志愿者' and (domain in USER_PERMISSIONS[field]):
-            extattr_add_update = wx_method.replace_zyz(extattr_add, domain_p, content)
-        elif field == '认证' and (domain in USER_PERMISSIONS[field]):
-            extattr_add_update = wx_method.replace_auth(extattr_add, domain_p, content)
-        elif field == '归属' and (domain in USER_PERMISSIONS[field]):
-            extattr_add_update = wx_method.replace_gs(extattr_add, domain_p, content)
-        else:
-            logger.info(f'{domain_p} :没有该字段 or {domain}无权限操作 ')
-
-        return extattr_add
-        try:
-            client.user.update(user_id=wx_id, extattr=extattr_add_update)
-            logger.info(f'replace {field}\000 {domain_p} info: success')
-            return True
-        except:
-            logger.info(f'replace {field}\000 {domain_p} info: error')
-            return False
-
-'''

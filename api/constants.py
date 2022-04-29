@@ -38,8 +38,8 @@ USER_PERMISSIONS = {
     '认证': [
         'o_liuaote'
     ],
-    '党员': [
-
+    '志愿者': [
+        
     ]
 }
 

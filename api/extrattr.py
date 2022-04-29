@@ -54,10 +54,16 @@ class MyExcelView(GenericViewSet):
             content = ws.cell(row=row, column=4).value
             option = ws.cell(row=row, column=5).value
 
+            # 判断field字段是否合法
+            if field not in USER_PERMISSIONS:
+                logger.info(f'{domain_p} 的{field}字段不合法')
+                return Response({'message': f'{domain_p} 域账户的({field})字段不合法'}, status=status.HTTP_404_NOT_FOUND)
+
+
             # 判断执行者是否有权限
             if domain not in USER_PERMISSIONS[field]:
                 logger.info(f'{domain_p} :执行者没有权限')
-                return Response({'message': f'{domain} :执行者没有权限'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'message': f'{domain} :执行者对{field}字段没有权限修改'}, status=status.HTTP_404_NOT_FOUND)
 
             if content == "清空":
                 content = ""
@@ -81,7 +87,7 @@ class MyExcelView(GenericViewSet):
             logger.info(f'get extattr {domain_p} info: {extattr_add}')
 
             # 根据用户需要修改的字段，调用具体的方法
-            extattr_add_update = wx_method.update_api(extattr_add, domain_p, field, content)
+            extattr_add_update = wx_method.choice_field(extattr_add, domain_p, field, content)
             try:
                 # 调用企业微信更改字段值
                 client.user.update(user_id=wx_id, extattr=extattr_add_update)
