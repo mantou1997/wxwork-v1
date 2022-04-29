@@ -39,7 +39,7 @@ USER_PERMISSIONS = {
         'o_liuaote'
     ],
     '志愿者': [
-        
+        'o_liuaote'
     ]
 }
 

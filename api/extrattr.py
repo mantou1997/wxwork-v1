@@ -1,18 +1,18 @@
 from logging import ERROR
+
 import openpyxl
+from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 from wechatpy.work import WeChatClient
 
+from api.constants import IAC_SECRET, WX_SECRET
+from api.serializers import UpdateAttrSerializer
+from utils.logger import logger
 from utils.wxiac import iac
 from utils.wxmethod import wx_method
-from rest_framework import status
-from utils.logger import logger
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from api.serializers import UpdateAttrSerializer
-from rest_framework.viewsets import GenericViewSet
-
-from api.constants import IAC_SECRET, WX_SECRET, USER_PERMISSIONS
 
 
 # Create your views here.
@@ -49,21 +49,17 @@ class MyExcelView(GenericViewSet):
         ws = wb.get_sheet_by_name(wb.get_sheet_names()[0])
 
         for row in range(2, ws.max_row + 1):
-            domain_p = ws.cell(row=row, column=2).value
+            domain_excel = ws.cell(row=row, column=2).value
             field = ws.cell(row=row, column=3).value
             content = ws.cell(row=row, column=4).value
             option = ws.cell(row=row, column=5).value
 
-            # 判断field字段是否合法
-            if field not in USER_PERMISSIONS:
-                logger.info(f'{domain_p} 的{field}字段不合法')
-                return Response({'message': f'{domain_p} 域账户的({field})字段不合法'}, status=status.HTTP_404_NOT_FOUND)
-
-
-            # 判断执行者是否有权限
-            if domain not in USER_PERMISSIONS[field]:
-                logger.info(f'{domain_p} :执行者没有权限')
-                return Response({'message': f'{domain} :执行者对{field}字段没有权限修改'}, status=status.HTTP_404_NOT_FOUND)
+            # 判断field字段是否合法,判断执行者domain是否有权限
+            wx_valid = wx_method.is_valid(field, domain, domain_excel)
+            if wx_valid == 'not_field':
+                return Response({'message': f'{domain_excel} 域账户的({field})字段不合法'}, status=status.HTTP_404_NOT_FOUND)
+            elif wx_valid == 'net_domain':
+                return Response({'message': f'执行用户：{domain} ，对{field}字段没有权限修改'}, status=status.HTTP_404_NOT_FOUND)
 
             if content == "清空":
                 content = ""
@@ -72,9 +68,9 @@ class MyExcelView(GenericViewSet):
             """
             @param wx_id: 企业微信 id
             """
-            wx_id = iac.get_user_info(domain=domain_p)
+            wx_id = iac.get_user_info(domain=domain_excel)
             if not wx_id:
-                logger.info(f'{domain_p} :not wx_id ')
+                logger.info(f'{domain_excel} :not wx_id ')
                 continue
 
             """
@@ -82,19 +78,28 @@ class MyExcelView(GenericViewSet):
             @param secret: 密钥
             @param extattr_add: 企业微信个人信息
             """
+            # 调用企业微信api获取用户信息
             client = WeChatClient(WX_SECRET.get('corp_id'), WX_SECRET.get('secret'))
             extattr_add = client.user.get(wx_id)['extattr']
-            logger.info(f'get extattr {domain_p} info: {extattr_add}')
+            logger.info(f'update extattr {domain_excel} info: {extattr_add}')
 
-            # 根据用户需要修改的字段，调用具体的方法
-            extattr_add_update = wx_method.choice_field(extattr_add, domain_p, field, content)
+            """
+            @param option: 操作： 替换/更新
+            @param extattr_add: 企业微信个人信息
+            @param domain_excel: excel里的域账户
+            @param field: 修改的字段
+            @param content: 修改的内容
+
+            方法：先根据 option 判断操作（替换/更新），再根据 field 判断要修改那个字段
+            """
+            extattr_add_update = wx_method.choice_option_field(option, extattr_add, domain_excel, field, content)
+
             try:
-                # 调用企业微信更改字段值
+                # 调用企业微信api更改字段值
                 client.user.update(user_id=wx_id, extattr=extattr_add_update)
+                logger.info(f'{domain_excel} update success')
             except Exception as e:
-                logger.info(f'{domain_p} error: {e}')
+                logger.info(f'{domain_excel} error: {e}')
 
         wb.close()
         return Response({'message': f'用户字段更新完成'}, status=status.HTTP_200_OK)
-
-
