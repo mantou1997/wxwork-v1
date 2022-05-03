@@ -52,7 +52,7 @@ class WxMethod(object):
 
     def choice_option_field(self, option: str, extattr_add: dict, domain_excel: str, field: str, content: str) -> dict:
         """
-        @param option: 操作： 替换/更新
+        @param option: 选项： 替换/更新
         @param extattr_add: 企业微信个人信息
         @param domain_excel: excel里的域账户
         @param field: 修改的字段
