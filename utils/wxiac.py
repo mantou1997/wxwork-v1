@@ -1,6 +1,7 @@
 import requests
 from utils.cache import cache_function
 from utils.logger import logger
+from api.constants import USER_PERMISSIONS, IAC_SECRET
 
 
 class WxIAC(object):
@@ -30,7 +31,7 @@ class WxIAC(object):
     def get_user_info(self, domain: str) -> dict:
         url = "http://wx-api.gz.cvte.cn/user/search"
         headers = {
-            'access-token': self.get_access_token()
+            'access-token': self.get_access_token(IAC_SECRET.get('appid'), IAC_SECRET.get('secret'))
         }
         params = {
             'data': domain
