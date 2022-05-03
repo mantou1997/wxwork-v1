@@ -22,18 +22,14 @@ class MyExcelView(GenericViewSet):
     def my_excel(self, request, *args, **kwargs) -> Response:
         # 0. 数据校验
         try:
-            # 获取前端传入的请求体数据
-            data = request.data
-            # 创建序列化器进行反序列化
-            serializer = UpdateAttrSerializer(data=data)
-            # 调用序列化器的is_valid方法进行校验
+            serializer = UpdateAttrSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
         except ValidationError as e:
             errors = f'UpdateAttr Validate Failed: {e}'
             logger.alert(level=ERROR, msg=errors)
             return Response({"result": "failed", "message": errors})
-        domain: str = data['domain']
-        excel = data['excel']
+        domain: str = request.data['domain']
+        excel = request.data['excel']
 
         wb = openpyxl.load_workbook(excel)
         ws = wb.get_sheet_by_name(wb.get_sheet_names()[0])
