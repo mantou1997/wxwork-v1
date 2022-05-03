@@ -28,8 +28,9 @@ class WxMethod(object):
 
     @staticmethod
     # 替换-志愿者
-    def replace_zyz(extattr_add: dict, domain_excel: str, content: str) -> dict:
+    def replace(extattr_add: dict, domain_excel: str, field:str,content: str) -> dict:
         """
+        @param field: 要操作的字段
         @param extattr_add: 企业微信个人信息
         @param domain_excel: excel里的域账户
         @param content: 修改的内容
@@ -38,24 +39,24 @@ class WxMethod(object):
         # 1. 判断attrs是否为空
         if not extattr_add['attrs']:
             logger.info(f'get attrs {domain_excel} info: attrs is None,been added')
-            extattr_add['attrs'] = [{'name': '志愿者', 'value': '', 'type': 0, 'text': {'value': ''}}]
+            extattr_add['attrs'] = [{'name': field, 'value': '', 'type': 0, 'text': {'value': ''}}]
 
         # 2.判断 志愿者 是否为空
         is_ok = '0'
         for item in extattr_add['attrs']:
             # 更新
-            if item["name"] == "志愿者":
+            if item["name"] == field:
                 is_ok = '1'
                 # print("有志愿者")
                 break
         if is_ok == '0':
-            extattr_add['attrs'] = [{'name': '志愿者', 'value': '', 'type': 0, 'text': {'value': ''}}]
-            logger.info(f'get 志愿者 {domain_excel} info: attrs is None,been added')
+            extattr_add['attrs'] = [{'name': field, 'value': '', 'type': 0, 'text': {'value': ''}}]
+            logger.info(f'get {field} {domain_excel} info: attrs is None,been added')
 
         # 3.添加星星
         for item in extattr_add['attrs']:
-            if item['name'] == '志愿者':
-                extattr_add['attrs'] = [{'name': '志愿者', 'value': content, 'type': 0, 'text': {'value': content}}]
+            if item['name'] == field:
+                extattr_add['attrs'] = [{'name': field, 'value': content, 'type': 0, 'text': {'value': content}}]
 
         return extattr_add
 
@@ -136,30 +137,30 @@ class WxMethod(object):
         方法：先根据 option 判断操作（替换/更新），再根据 field 判断要修改那个字段
         """
         if option == '替换':
-            extattr_add = self.choice_field(extattr_add, domain_excel, field, content)
+            extattr_add = self.replace(extattr_add, domain_excel, field, content)
             return extattr_add
 
     # 根据field，修改对应字段
-    def choice_field(self, extattr_add: dict, domain_excel: str, field: str, content: str) -> dict:
-        """
-        @param extattr_add: 企业微信个人信息
-        @param domain_excel: excel里的域账户
-        @param field: 修改的字段
-        @param content: 修改的内容
-        """
-        extattr_add_update = {}
-
-        # 调用具体字段-方法
-        if field == '志愿者':
-            extattr_add_update = self.replace_zyz(extattr_add, domain_excel, content)
-        elif field == '认证':
-            extattr_add_update = self.replace_auth(extattr_add, domain_excel, content)
-        elif field == '归属':
-            extattr_add_update = self.replace_gs(extattr_add, domain_excel, content)
-        else:
-            logger.info(f'{domain_excel} :没有该字段')
-
-        return extattr_add_update
+    # def choice_field(self, extattr_add: dict, domain_excel: str, field: str, content: str) -> dict:
+    #     """
+    #     @param extattr_add: 企业微信个人信息
+    #     @param domain_excel: excel里的域账户
+    #     @param field: 修改的字段
+    #     @param content: 修改的内容
+    #     """
+    #     extattr_add_update = {}
+    #
+    #     # 调用具体字段-方法
+    #     if field == '志愿者':
+    #         extattr_add_update = self.replace_zyz(extattr_add, domain_excel, content)
+    #     elif field == '认证':
+    #         extattr_add_update = self.replace_auth(extattr_add, domain_excel, content)
+    #     elif field == '归属':
+    #         extattr_add_update = self.replace_gs(extattr_add, domain_excel, content)
+    #     else:
+    #         logger.info(f'{domain_excel} :没有该字段')
+    #
+    #     return extattr_add_update
 
 
 wx_method = WxMethod()
