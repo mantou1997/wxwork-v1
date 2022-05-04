@@ -15,11 +15,11 @@ from utils.wxiac import iac
 from utils.wxmethod import wx_method
 
 
-# Create your views here.
-class MyExcelView(GenericViewSet):
+# Create your views here.123
+class UpdateExtattrViewSet(GenericViewSet):
     # url http://127.0.0.1:8000/v1/api/wx/extrattr/
     @action(methods=['post'], detail=False, url_path='extattr')
-    def my_excel(self, request, *args, **kwargs) -> Response:
+    def update_extattr(self, request, *args, **kwargs) -> Response:
         # 0. 数据校验
         try:
             serializer = UpdateAttrSerializer(data=request.data)
