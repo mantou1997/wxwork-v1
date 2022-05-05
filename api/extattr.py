@@ -47,7 +47,7 @@ class UpdateExtattrViewSet(GenericViewSet):
             # 3.根据域账户获取wx-id
             wx_id = iac.get_user_info(domain=domain_excel)
             if not wx_id:
-                logger.info(f'{domain_excel} :not wx_id ')
+                logger.info(f'{domain_excel} :not wx_id =============')
                 continue
 
             # 4.调用企业微信api获取用户信息
