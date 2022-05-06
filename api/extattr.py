@@ -66,4 +66,4 @@ class UpdateExtattrViewSet(GenericViewSet):
                 logger.info(f'{domain_excel} error: {e}')
 
         wb.close()
-        return Response({'message': f'用户字段更新完成'}, status=status.HTTP_200_OK)
+        return Response({'message': f'用户字段更新完成😙'}, status=status.HTTP_200_OK)
