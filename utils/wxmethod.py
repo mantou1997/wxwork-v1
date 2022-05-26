@@ -27,23 +27,11 @@ class WxMethod(object):
         @param content: 修改的内容
         方法：先根据 option 判断操作（替换/更新），再根据 field 判断要修改那个字段
         """
-        # 1. 判断attrs是否为空
-        if not extattr_add['attrs']:
-            logger.info(f'get attrs {domain_excel} info: attrs is None,been added')
-            extattr_add['attrs'] = [{'name': field, 'value': '', 'type': 0, 'text': {'value': ''}}]
 
-        # 2.判断 field 字段 是否为空
-        is_ok = '0'
-        for item in extattr_add['attrs']:
-            # 更新
-            if item["name"] == field:
-                is_ok = '1'
-                break
-        if is_ok == '0':
-            extattr_add['attrs'] = [{'name': field, 'value': '', 'type': 0, 'text': {'value': ''}}]
-            logger.info(f'get {field} {domain_excel} info: attrs is None,been added')
+        # 先判断企业微信 extattr_add 字典里的对应属性是否是空值
+        self.is_none(extattr_add, domain_excel, field)
 
-        if option == '删除':
+        if option == '删除' and content is not None:
             extattr_add = self.del_content(extattr_add, field, content)
         if option == '替换' or content is None:
             extattr_add = self.replace(extattr_add, field, content)
@@ -125,6 +113,31 @@ class WxMethod(object):
                                              'text': {'value': str(item["text"]["value"]) + content_item}}]
 
         return extattr_add
+
+    @staticmethod
+    def is_none(extattr_add, domain_excel, field):
+        """
+        @param field: 要操作的字段
+        @param extattr_add: 企业微信个人信息
+        @param domain_excel: excel里的域账户
+        判断企业微信 extattr_add 字典里的对应属性是否是空值
+        """
+
+        # 1. 判断attrs是否为空，是空则添加
+        if not extattr_add['attrs']:
+            logger.info(f'get attrs {domain_excel} info: attrs is None,been added')
+            extattr_add['attrs'] = [{'name': field, 'value': '', 'type': 0, 'text': {'value': ''}}]
+
+        # 2.判断 field 字段 是否为空，是空则添加
+        is_ok = '0'
+        for item in extattr_add['attrs']:
+            # 更新
+            if item["name"] == field:
+                is_ok = '1'
+                break
+        if is_ok == '0':
+            extattr_add['attrs'] = [{'name': field, 'value': '', 'type': 0, 'text': {'value': ''}}]
+            logger.info(f'get {field} {domain_excel} info: attrs is None,been added')
 
 
 wx_method = WxMethod()

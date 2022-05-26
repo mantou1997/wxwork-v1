@@ -40,6 +40,9 @@ USER_PERMISSIONS = {
     ],
     '志愿者': [
         'o_liuaote'
+    ],
+    '党员认证': [
+        'o_liuaote'
     ]
 }
 
